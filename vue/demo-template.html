@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>实现一个模板语法</title>
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<code>
+		<pre style="font-size: 16px; color: #444;">vue模板类型<br>{{}} 文本插值<br>v-html html插值<br>表达式 {{ isShow ? 'show':'hide' }}<br>属性  :data-show="isShow"</pre>
+	</code>
+	<hr>
+
+	<div id="app">
+		<button>{{val1}}</button>
+		<button>{{val1}}</button>
+		<button>{{val2}}</button>
+		<button>{{val3}}</button>
+		<button>{{val3+val1}}</button>
+		<button>{{val3+val2}}</button>
+	</div>
+
+	<script type="text/javascript">
+
+		var vm = null;
+
+		if(document.addEventListener){
+			document.addEventListener('DOMContentLoaded', function(){
+				document.removeEventListener('DOMContentLoaded', arguments.callee, false);
+				initTpl();
+			})
+		}
+
+		function initTpl(){
+			vm = new Tpl({
+				el: '#app',
+				data: {
+					val1: 1,
+					val2: 2,
+					val3: 3
+				}
+			})
+		}
+
+		function Tpl(opt){
+			this.opt = opt;
+			this.init();
+		}
+
+		Tpl.prototype = {
+			init : function() {
+				this.initEl();
+				this.render();
+			},
+
+			initEl: function(){
+				if(!this.opt.el){
+					console.log('error');
+					return;
+				}
+
+				let id = this.opt.el.match(/#(\S*)/)[1];
+				this.$el = document.getElementById(id)
+			},
+
+			/**
+				先获取所有的模板语法的结构
+				解析模板，替换数据
+
+				{
+					'{{val1}}': 1,
+					'{{val2}}': 2,
+					'{{val3}}': 3
+				}
+			*/
+
+			render : function() {
+				if(!this.$el){
+					console.log('error');
+					return;
+				}
+
+				if(JSON.stringify(this.data) == '{}'){
+					console.log('error');
+					return;
+				}
+
+				var html = this.$el.outerHTML;
+
+				html = this.txtRender(html,this.opt.data);
+
+				this.outputHTML(html);
+			},
+
+			outputHTML: function(html){
+				this.$el.outerHTML = html;
+			},
+
+			//{{txt}}
+			txtRender : function(html, data){
+				for(let i in data){
+					let reg = new RegExp('{{'+i+'}}', 'g');
+					html = html.replace(reg, data[i]);
+				}
+
+				html = this.valExp(html, data);
+				return html;
+			},
+
+			//v-html
+			htmlRender: function(){
+
+			},
+
+			//v-bind:href="href"
+			attrRender: function(html, key, val){
+				let reg = new RegExp('{{'+key+'}}', 'g');
+				return html.replace(reg, val);
+			},
+
+			//验证表达式：检测是否存在不匹配数据的表达式
+			valExp: function(html, data){
+				var reg = new RegExp(/{{(\S*)}}/, 'g');
+				var arr = html.match(reg);
+				for(let i in arr){
+					let str1 = arr[i]; 
+					let str2 = str1.match(/{{(\S*)}}/)[1]; //获取括号内部的表达式
+					let str3 = '';
+
+
+					for(let j in data){
+						let reg1 = new RegExp(j, 'g');
+						str2 = str2.replace(reg1, 'data.'+j);
+					}
+					//解析表达式中的对应的数据变量
+					let script = 'return function(data){ return '+str2+';}';
+					let result = new Function(script)()(data);
+					html = html.replace(str1, result)
+				}
+
+				return html;
+			},
+		}		
+	</script>
+</body>
+</html>

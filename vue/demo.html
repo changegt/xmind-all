@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<div id="app">
+		<button @click="click">{{val}}</button>
+	</div>
+
+	<script type="text/javascript">
+
+		var vm = null;
+
+		if(document.addEventListener){
+			document.addEventListener('DOMContentLoaded', function(){
+				document.removeEventListener('DOMContentLoaded', arguments.callee, false);
+				intVue();
+			})
+		}
+
+		function intVue(){
+			vm = new Vue({
+				el: '#app',
+				data: {
+
+				},
+				mounted () {
+
+				},
+				methods: {
+					
+				}
+			})
+		}
+	</script>
+</body>
+</html>
