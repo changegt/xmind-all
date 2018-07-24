@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<div id="app">
+		<input type="" name="" v-model="val1" id="input">
+		<span>数据：{{val1}}</span>
+	</div>
+
+	<script type="text/javascript">
+
+		var vm = null;
+
+		if(document.addEventListener){
+			document.addEventListener('DOMContentLoaded', function(){
+				document.removeEventListener('DOMContentLoaded', arguments.callee, false);
+				initTpl();
+			})
+		}
+
+		function initTpl(){
+			vm = {
+				el: '#app',
+				data: {
+					val1: 1,
+				}
+			};
+			bd = new Binding(vm);
+			tpl = new Tpl(vm);
+
+			document.getElementById('input').addEventListener('input', function(){
+				var val = this.value;
+				var key = this.attributes['v-model'].value;
+				bd.$data[key].set(val);
+				this.val = val;
+			});
+		}
+
+		function Binding (opt) {
+			this.opt = opt;
+			this.$data = {};
+			this.init();
+		}
+
+		Binding.prototype = {
+			init : function(){
+				for(var i in this.opt.data){
+					this.$data['_'+i] = this.opt.data[i];
+					this.bindData(i, this.opt.data[i]);
+				}
+			},
+
+			bindData: function(key, val){
+				var self = this;
+				this.$data[key] = {
+					get: function(){
+						return self.$data['_'+key];
+					},
+
+					set : function(val){
+						self.$data['_'+key] = val;
+						self.handler(key);
+					}
+				}
+			},
+
+			handler: function(key){
+				var self = this;
+				var obj = {};
+				obj[key] = self.$data[key].get();
+				tpl.initEl(obj)
+			}
+		}
+
+		function Tpl(opt){
+			this.opt = opt;
+			this.init();
+		}
+
+		Tpl.prototype = {
+			init : function() {
+				this.initEl(this.opt.data);
+			},
+
+			initEl: function(data){
+				if(!this.opt.el){
+					console.log('error');
+					return;
+				}
+
+				let id = this.opt.el.match(/#(\S*)/)[1];
+				this.$el = document.getElementById(id)
+
+				this.render(data);
+			},
+
+			/**
+				先获取所有的模板语法的结构
+				解析模板，替换数据
+
+				{
+					'{{val1}}': 1,
+					'{{val2}}': 2,
+					'{{val3}}': 3
+				}
+			*/
+
+			render : function(data) {
+				if(!this.$el){
+					console.log('error');
+					return;
+				}
+
+				if(JSON.stringify(data) == '{}'){
+					console.log('error');
+					return;
+				}
+
+				if(!this.$dom){
+					this.$dom = this.$el.outerHTML;
+				}
+
+				var html = this.$dom;
+
+				html = this.txtRender(html, data);
+
+				this.outputHTML(html);
+			},
+
+			outputHTML: function(html){
+				this.$el.outerHTML = html;
+			},
+
+			//{{txt}}
+			txtRender : function(html, data){
+				for(let i in data){
+					let reg = new RegExp('{{'+i+'}}', 'g');
+					html = html.replace(reg, data[i]);
+				}
+
+				html = this.valExp(html, data);
+				html = this.valModel(html, data);
+				return html;
+			},
+
+			//v-html
+			htmlRender: function(){
+
+			},
+
+			//v-bind:href="href"
+			attrRender: function(html, key, val){
+				let reg = new RegExp('{{'+key+'}}', 'g');
+				return html.replace(reg, val);
+			},
+
+			//验证表达式：检测是否存在不匹配数据的表达式
+			valExp: function(html, data){
+				var reg = new RegExp(/{{(\S*)}}/, 'g');
+				var arr = html.match(reg);
+				for(let i in arr){
+					let str1 = arr[i]; 
+					let str2 = str1.match(/{{(\S*)}}/)[1]; //获取括号内部的表达式
+					let str3 = '';
+
+
+					for(let j in data){
+						let reg1 = new RegExp(j, 'g');
+						str2 = str2.replace(reg1, 'data.'+j);
+					}
+					//解析表达式中的对应的数据变量
+					let script = 'return function(data){ return '+str2+';}';
+					let result = new Function(script)()(data);
+					html = html.replace(str1, result)
+				}
+
+				return html;
+			},
+
+			valModel: function(html, data){
+				//TODO 解析dom树，实现获取model节点，配置数据双向绑定
+			}
+		}
+	</script>
+</body>
+</html>
