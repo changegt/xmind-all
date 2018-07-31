@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>拖动</title>
+</head>
+<body>
+	<div id="container" style="width: 100px; height: 100px; position: absolute; border: solid 1px #000;"></div>
+
+	<script type="text/javascript">
+		var $container = document.getElementById('container');
+
+		function Drag($target, isNeedBoundary){
+			this.$target = $target;
+			this.isNeedBoundary = !!isNeedBoundary ? isNeedBoundary : false;
+			this.init();
+		}
+
+		Drag.prototype = {
+			init: function(){
+				this.initData();
+				this.bindEvent();
+			},
+
+			initData: function(){
+				this.innerFlag = false;
+				this.downFlag = false;
+				this.outerWidth = parseInt(this.$target.style.width) + 2 * parseInt(this.$target.style.borderWidth);
+				this.outerHeight = parseInt(this.$target.style.height) + 2 * parseInt(this.$target.style.borderWidth);
+				this.pointPos = {
+					x: 0,
+					y: 0
+				};
+				this.containerPos = {
+					x: 0,
+					y: 0
+				};
+			},
+
+			bindEvent: function(){
+				var self = this;
+
+				if(document.addEventListener){
+					document.addEventListener('mousedown', function (e){self.mousedownCall(e || window.event || window.e)});
+					document.addEventListener('mouseup', function (e){self.mouseupCall(e || window.event || window.e)});
+					document.addEventListener('mousemove', function (e){self.mousemoveCall(e || window.event || window.e)});
+				}else{
+					//兼容ie8及以下兼容
+					window.document.onmousedown = function (e){self.mousedownCall(e || window.event || window.e)}
+					window.document.onmouseup = function (e){self.mouseupCall(e || window.event || window.e)}
+					window.document.onmousemove = function (e){self.mousemoveCall(e || window.event || window.e)}
+				}
+			},
+
+			mousedownCall: function(e){
+
+				/**
+				 * 逻辑：	
+				 * 	1、判断当前是否在容器内
+				 * 	2、记录当前的容器的pagex和pagey, 当前鼠标的pagex和pagey
+				 */
+				this.downFlag = true;
+
+				this.pointPos = {
+					x: e.clientX || e.pageX,
+					y: e.clientY || e.pageY
+				};
+
+				this.containerPos = {
+					x: this.$target.offsetLeft,
+					y: this.$target.offsetTop
+				};
+
+				//判断当前是否鼠标是否在容器中
+				this.doJudgeIsInner();
+			},
+
+			mouseupCall: function(e){
+				this.downFlag = false;
+				this.doJudgeIsInner();
+			},
+
+			mousemoveCall: function(e){
+				if(!this.innerFlag){
+					return;
+				}
+
+				if(!this.downFlag){
+					return;
+				}
+				
+				this.setMove(e);
+				this.doMove();
+			},
+
+			//设置位移数据
+			setMove: function(e){
+
+				//执行前先判断当前是否在内
+				this.doJudgeIsInner();
+
+				//记录上一次的点击
+				var lastPoint = this.pointPos;
+
+				//覆盖当前鼠标
+				this.pointPos = {
+					x: e.clientX || e.pageX,
+					y: e.clientY || e.pageY
+				};
+
+				//获取move值
+				var movex = this.pointPos.x - lastPoint.x;
+				var movey = this.pointPos.y - lastPoint.y;
+
+				
+				var offsetL = this.containerPos.x + movex;
+				var offsetT = this.containerPos.y + movey;
+
+				//根据配置判断是否需要边界拦截处理
+				if(this.isNeedBoundary){
+					offsetL = offsetL >= window.innerWidth - this.outerWidth ? window.innerWidth - this.outerWidth : ( offsetL <= 0 ? 0 : offsetL );
+					offsetT = offsetT >= window.innerHeight - this.outerHeight ? window.innerHeight - this.outerHeight : ( offsetT <= 0 ? 0 : offsetT );
+				}
+
+				//定义当前的容器位置的数据
+				this.containerPos = {
+					x: offsetL,
+					y: offsetT
+				}
+			},
+
+			//容器移动
+			doMove: function(){
+				this.$target.style.left = this.containerPos.x + 'px';
+				this.$target.style.top = this.containerPos.y + 'px';
+			},
+
+			//判断当前鼠标是否在内部
+			doJudgeIsInner : function(){
+				var xVal = this.pointPos.x - this.containerPos.x;
+				if(xVal > this.outerWidth || xVal < 0){
+					return this.innerFlag = false;
+				}
+
+				var yVal = this.pointPos.y - this.containerPos.y;
+				if(yVal > this.outerHeight || yVal < 0){
+					return this.innerFlag = false;
+				}
+
+				return this.innerFlag = true;
+			}
+		}
+
+		var dg = new Drag($container, false);
+	</script>
+</body>
+</html>
