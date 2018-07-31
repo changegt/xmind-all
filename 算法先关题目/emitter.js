@@ -1,6 +1,4 @@
-// on
-// off
-// trigger
+// 自定义事件
 
 function EventEmitter(){
 	this.init();
@@ -17,7 +15,7 @@ EventEmitter.prototype = {
 	 * [on description]
 	 * @param  {[type]} event [description]
 	 * @param  {[type]} func  [description]
-	 * @param  {[type]} 扩展参数 isCover[default=false]
+	 * @param  {[type]} 扩展参数 isCover[default=false]是否支持自定义覆盖
 	 * @return {[type]}       [description]
 	 */
 	on (...args) {
@@ -27,12 +25,14 @@ EventEmitter.prototype = {
 			return;
 		}
 
-		if(typeof args[0] != 'string'){
+		var event = args[0];
+		if(typeof event != 'string'){
 			alert('参数类型错误');
 			return;
 		}
 
-		if(!self._isFunc(args[1])){
+		var func = args[1];
+		if(!self._isFunc(func)){
 			alert('参数类型错误');
 			return;
 		}
@@ -40,17 +40,17 @@ EventEmitter.prototype = {
 		//扩展参数
 		let isCover = args.length >= 3 ? args[2] : false;
 
-		if(!self.eventObserver[args[0]]){
-			self.eventObserver[args[0]] = [];
+		if(!self.eventObserver[event]){
+			self.eventObserver[event] = [];
 		}
 
 		if(isCover){
 			//执行覆盖
-			self.eventObserver[args[0]]	= [{
-				func: args[1]
+			self.eventObserver[event] = [{
+				func: func
 			}];
 		}else{
-			self.eventObserver[args[0]].push(args[1]);
+			self.eventObserver[event].push(func);
 		}
 	},
 

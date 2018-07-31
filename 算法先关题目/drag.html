@@ -1,3 +1,4 @@
+<!--js实现拖动方法-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,9 +42,9 @@
 				var self = this;
 
 				if(document.addEventListener){
-					document.addEventListener('mousedown', function (e){self.mousedownCall(e || window.event || window.e)});
+					document.addEventListener('mousedown', function (e){self.mousedownCall(e || window.event || window.e)}, false);
 					document.addEventListener('mouseup', function (e){self.mouseupCall(e || window.event || window.e)});
-					document.addEventListener('mousemove', function (e){self.mousemoveCall(e || window.event || window.e)});
+					document.addEventListener('mousemove', function (e){self.mousemoveCall(e || window.event || window.e)}, false);
 				}else{
 					//兼容ie8及以下兼容
 					window.document.onmousedown = function (e){self.mousedownCall(e || window.event || window.e)}

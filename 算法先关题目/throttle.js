@@ -1,15 +1,33 @@
 //节流函数
-
 function throttle(func, duration){
-	//方法间隔固定执行
-	var obj = func;
-	if(obj.timer){
-		clearTimeout(obj.timer);
+	this.lastTime = new Date().getTime();
+	var b = function(){
+
+		//限流算法, 有一个问题：就是如果一直滚动的话，方法就直接处于被clear
+		// if(this.timer){
+		// 	clearTimeout(this.timer);
+		// }
+
+		// this.timer = setTimeout(function(){
+		// 	func();
+		// },duration);
+
+
+		//通过时间节点来限流
+		//当前时间 - 前一次执行定时任务的时间  > duration , 执行定时任务，同时设置时间
+		if(new Date().getTime() - this.lastTime > duration){
+			this.timer = setTimeout(function(){
+				func();
+			},duration);
+			this.lastTime = new Date();
+		}
 	}
 
-	obj.timer = setTimeout(function(){
-		func.call(obj);
-	},duration);
-
-	//方法执行结束后，间隔固定时间执行
+	return b;
 }
+
+function a(){
+	console.log(new Date().getTime())
+}
+
+window.addEventListener('scroll', throttle(a, 200), false);
