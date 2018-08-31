@@ -25,13 +25,35 @@
 			vm = new Vue({
 				el: '#app',
 				data: {
-
+					x: 1
 				},
-				mounted () {
+				beforeCreate () {
+					console.log(this.$data)
+					console.log(this.do)
+					console.log(this)
+					console.log('-----------beforeCreate')
+				},
 
+				created (){
+					console.log(this.$data)
+					console.log(this.do)
+					debugger;
+					console.log('-----------created')
+				},
+
+				beforeMount () {
+					console.log(this.$data)
+					console.log(this.$event)
+					console.log('-----------beforeMount')
+				},
+
+				mounted () {
+					console.log(this.$data)
+					console.log(this.$event)
+					console.log('-----------mounted')
 				},
 				methods: {
-					
+					do () {}
 				}
 			})
 		}

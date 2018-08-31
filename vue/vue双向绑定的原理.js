@@ -3,7 +3,7 @@ initData()
 obeserve() 
 => 
 Observer实例
-【Object.keys遍历子属性（所以导致子属性的属性改变无法监听到，所以需要手动forceupdate）都添加上getter和setter】 
+【Object.keys遍历子属性和一直遍历到没有子层对象为止】 
 => 
 注册getter和setter的方法defineReactive
 

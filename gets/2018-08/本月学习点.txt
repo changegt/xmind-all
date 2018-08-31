@@ -1,0 +1,36 @@
+1、ios有个版本兼容问题 flex 默认flex-direction:column
+
+2、promise的兼容问题安卓4.3以下，使用es5-promise来做兼容处理方案
+
+3、攻击：
+	1、xss攻击 跨站脚本攻击【网页上发布含攻击型的js脚本】【后端过滤，前端转义】
+	2、csrf 跨站伪造攻击【伪造一个模仿表单提交的请求】【post请求、身份验证cookie，验证码】
+
+4、组件写法：
+	1、判断是否是存在exports和module对象，存在说明当前处于node的commonJS语法环境，直接module.exports 输出函数
+	2、不存在exports和module语法，在判断是否存在define对象，存在的话说明使用requireJs加载资源，调用define方法，
+	将方法添加到require对象中。
+	3、都没有的话，将函数复制给全局对象。
+
+5、移动端适配方案
+
+6、前端存储
+	1、localStorage
+	2、cookies
+	3、sessionStorage
+	4、indexedDB [nosql 类型的数据库，存储形式是json]
+		适用：有多量的键值数据，
+	5、web SQL
+
+7、chrome devtools全解析
+	tab
+		Elements[元素，dom树]
+		Console
+		Sources[资源树]
+		Network[网络]
+		Performance[]
+		Memory
+		Application
+		Security
+		Audits
+	

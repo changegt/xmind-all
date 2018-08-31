@@ -1,0 +1,21 @@
+1、router-view组件
+2、router-link组件
+3、install方法
+createRouteMap
+addRouteRecord
+createMatcher
+History
+
+HTML5History
+
+HashHistory
+
+AbstractHistory
+
+VueRouter
+
+
+1、Vue.use来加载vue-router插件，
+	初始化相关vue-router组件，
+	定义vue的$router原型和 $route原型
+	实现钩子函数的混合，主要是beforeUpdate钩子函数，内部定义根节点属性_routerRoot和路由对象_router同时初始化路由函数，还有定义_route属性的监听
