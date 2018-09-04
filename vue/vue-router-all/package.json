@@ -1,0 +1,16 @@
+{
+  "name": "vue-router-all",
+  "version": "1.0.0",
+  "description": "研究vue-router相关",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yyf",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.1",
+    "vue": "^2.5.17",
+    "vue-router": "^3.0.1"
+  }
+}

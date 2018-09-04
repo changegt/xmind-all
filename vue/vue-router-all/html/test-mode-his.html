@@ -1,0 +1,46 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>test-mod-his</title>
+	<script type="text/javascript" src="../src/vue.js"></script>
+	<script type="text/javascript" src="../src/vue-router.js"></script>
+</head>
+<body>
+	<div id="app">
+		{{key}}
+		<router-link to="/vuetest"><button>路由</button></router-link>
+		<router-view></router-view>
+	</div>
+
+	<template id="vue-tpl">
+		<div>路由</div>
+	</template>
+
+	<script type="text/javascript">
+
+		let router = new VueRouter({
+			mode: 'history',
+			routes: [
+				{path: '/vuetest', component: {
+					template: document.getElementById('vue-tpl').innerHTML.trim()
+				}}
+			]
+		});
+
+		vm = new Vue({
+			el: '#app',
+			router,
+			data : {
+				key: 'hello vur-router'
+			},
+			mounted () {
+
+			},
+
+			methods: {
+
+			}
+		})
+	</script>
+</body>
+</html>
