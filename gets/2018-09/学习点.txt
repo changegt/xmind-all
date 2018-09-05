@@ -1,0 +1,4 @@
+1、视频video标签去除下载按钮行为【chrome浏览器】
+	$('video').on('contextmenu', function(){return false;})//右键无效
+	$('video').attr('controlslist', 'nodownload');//去除底部控制条中的下载按钮
+
