@@ -1118,9 +1118,11 @@ function createRouteMap (
   // $flow-disable-line
   var nameMap = oldNameMap || Object.create(null);
 
+  //解析route，生成各个数据项， 路径数组pathlist， 路径的map【pathmap】，还有名称的map
   routes.forEach(function (route) {
     addRouteRecord(pathList, pathMap, nameMap, route);
   });
+
 
   // ensure wildcard routes are always at the end
   for (var i = 0, l = pathList.length; i < l; i++) {
@@ -1132,9 +1134,9 @@ function createRouteMap (
   }
 
   return {
-    pathList: pathList,
-    pathMap: pathMap,
-    nameMap: nameMap
+    pathList: pathList, //路由的path字段的list
+    pathMap: pathMap, //各个路由的解析Map
+    nameMap: nameMap //各个路由的name字段list
   }
 }
 
@@ -2476,7 +2478,7 @@ prototypeAccessors.currentRoute.get = function () {
 };
 
 VueRouter.prototype.init = function init (app /* Vue component instance */) {
-    var this$1 = this;
+  var this$1 = this;
 
   "development" !== 'production' && assert(
     install.installed,

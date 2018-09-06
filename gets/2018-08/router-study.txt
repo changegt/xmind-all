@@ -1,8 +1,10 @@
 1、router-view组件
 2、router-link组件
 3、install方法
-createRouteMap
-addRouteRecord
+
+createRouteMap //构建路由map的方法
+
+addRouteRecord //
 createMatcher
 History
 
@@ -19,3 +21,9 @@ VueRouter
 	初始化相关vue-router组件，
 	定义vue的$router原型和 $route原型
 	实现钩子函数的混合，主要是beforeUpdate钩子函数，内部定义根节点属性_routerRoot和路由对象_router同时初始化路由函数，还有定义_route属性的监听
+
+2、vue-router的初始化是出于Vue的声明周期的beforeCreate的钩子函数，
+	同时vm对象创建两个新的属性_router 和 _route 来分别浅拷贝vm.$route、vm.$router，分别是路由对象，和当前路由的数据对象
+	
+	this._router = this.$options.router;
+	Vue.util.defineReactive(this, '_route', this._router.history.current);
